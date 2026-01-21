@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FingerCat - 手指计数游戏</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🐾</span>
+                <h1>FingerCat</h1>
+            </div>
+            <button class="settings-btn" id="settingsBtn" title="家长设置">⚙️</button>
+        </header>
+
+        <!-- 主游戏区域 -->
+        <main class="game-area">
+            <!-- 左侧区域 -->
+            <aside class="left-panel">
+                <!-- 摄像头区域 -->
+                <section class="camera-section">
+                    <div class="camera-container">
+                        <video id="videoElement" autoplay playsinline></video>
+                        <canvas id="handCanvas"></canvas>
+                        <div class="camera-status" id="cameraStatus">
+                            <div class="status-indicator"></div>
+                            <span>摄像头准备中...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 检测结果显示 -->
+                    <div class="detection-result" id="detectionResult">
+                       <span class="finger-icon">👆</span>
+                        <span class="finger-count">0</span>
+                        <span class="finger-label">个手指</span>
+                    </div>
+                </section>
+
+                <!-- 图片选择区 -->
+                <section class="image-selector">
+                    <h3>选择素材：</h3>
+                    <div class="image-gallery" id="imageGallery">
+                        <div class="image-card active" data-image="cat">
+                            <img src="assets/images/animals/cat.jpg" alt="小猫咪">
+                            <span class="image-label">小猫咪</span>
+                        </div>
+                        <!-- 更多图片卡片将通过 JS 动态添加 -->
+                    </div>
+                </section>
+            </aside>
+
+            <!-- 右侧：画布区域 -->
+            <section class="canvas-section">
+                <!-- 游戏控制按钮（移到画布上方） -->
+                <div class="game-controls">
+                    <button class="btn btn-primary" id="startBtn">
+                        <span class="btn-icon">🎮</span>
+                        开始
+                    </button>
+                    <button class="btn btn-secondary" id="listenBtn" disabled>
+                        <span class="btn-icon">🎤</span>
+                        说话
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        <span class="btn-icon">🗑️</span>
+                        清空
+                    </button>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="gameCanvas"></canvas>
+                    <div class="canvas-placeholder" id="canvasPlaceholder">
+                        <div class="placeholder-icon">✨</div>
+                        <p>伸出你的手指，说出数量吧！</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 控制面板（状态提示） -->
+        <div class="control-panel">
+            <div class="status-message" id="statusMessage">
+                欢迎来到 FingerCat！点击「开始游戏」按钮开始吧~
+            </div>
+        </div>
+
+        <!-- 家长控制面板（模态框） -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>家长设置</h2>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <label>难度设置：</label>
+                        <select id="difficultySelect">
+                            <option value="easy">简单（1-5）</option>
+                            <option value="medium" selected>中等（1-10）</option>
+                            <option value="hard">挑战（10+）</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label>音效控制：</label>
+                        <div class="toggle-group">
+                            <label class="toggle">
+                                <input type="checkbox" id="voiceToggle" checked>
+                                <span>语音反馈</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox" id="sfxToggle" checked>
+                                <span>音效</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label>识别灵敏度：</label>
+                        <input type="range" id="sensitivitySlider" min="1" max="5" value="3">
+                        <span id="sensitivityValue">中等</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本加载 -->
+    <script src="src/config.js"></script>
+    <script src="src/audio.js"></script>
+    <script src="src/imageLibrary.js"></script>
+    <script src="src/camera.js"></script>
+    <script src="src/canvas.js"></script>
+    <script src="src/speechRecognition.js"></script>
+    <script src="src/gameState.js"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>
