@@ -535,6 +535,26 @@ body {
     border-color: var(--primary);
 }
 
+.finger-settings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.finger-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.finger-item input {
+    width: 60px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
 .toggle-group {
     display: flex;
     gap: 20px;

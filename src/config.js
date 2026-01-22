@@ -5,6 +5,13 @@ const CONFIG = {
         minFramesConsistent: 3,  // 需要连续N帧一致才确认
         confidenceThreshold: 0.7, // 最低置信度
         maxFingers: 10,          // 最大手指数（基础版）
+        fingerThresholds: {      // 手指夹角阈值（小于此值为有效统计）
+            thumb: 30,
+            index: 30,
+            middle: 30,
+            ring: 30,
+            pinky: 30
+        }
     },
     
     // 难度设置

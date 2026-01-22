@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 初始化函数
 async function init() {
     try {
+        // 0. 加载本地设置
+        loadSettings();
+
         // 1. 初始化摄像头和手势识别
         Utils.updateStatus('正在启动摄像头...', 'info');
         await window.cameraManager.init();
@@ -99,6 +102,7 @@ function bindEventListeners() {
         difficultySelect.addEventListener('change', (e) => {
             STATE.currentDifficulty = e.target.value;
             console.log('难度设置:', e.target.value);
+            saveSettings();
         });
     }
 
@@ -108,6 +112,7 @@ function bindEventListeners() {
         voiceToggle.addEventListener('change', (e) => {
             CONFIG.audio.enableVoice = e.target.checked;
             console.log('语音反馈:', e.target.checked);
+            saveSettings();
         });
     }
 
@@ -117,6 +122,7 @@ function bindEventListeners() {
         sfxToggle.addEventListener('change', (e) => {
             CONFIG.audio.enableSFX = e.target.checked;
             console.log('音效:', e.target.checked);
+            saveSettings();
         });
     }
 
@@ -132,8 +138,28 @@ function bindEventListeners() {
             // 调整检测参数
             CONFIG.detection.minFramesConsistent = 6 - value; // 1-5 -> 5-1
             console.log('灵敏度:', labels[value - 1], '帧数:', CONFIG.detection.minFramesConsistent);
+            saveSettings();
         });
     }
+
+    // 设置面板 - 手指阈值
+    ['thumb', 'index', 'middle', 'ring', 'pinky'].forEach(finger => {
+        const input = document.getElementById(`${finger}Threshold`);
+        if (input) {
+            // 初始化值
+            input.value = CONFIG.detection.fingerThresholds[finger];
+            
+            input.addEventListener('change', (e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                    CONFIG.detection.fingerThresholds[finger] = value;
+                    console.log(`${finger} 阈值设置为:`, value);
+                    // 保存到本地
+                    saveSettings();
+                }
+            });
+        }
+    });
 
     // 键盘快捷键
     document.addEventListener('keydown', (e) => {
@@ -152,3 +178,57 @@ window.addEventListener('error', (e) => {
 window.addEventListener('unhandledrejection', (e) => {
     console.error('未处理的Promise错误:', e.reason);
 });
+
+// 保存设置到本地存储
+function saveSettings() {
+    const settings = {
+        fingerThresholds: CONFIG.detection.fingerThresholds,
+        difficulty: STATE.currentDifficulty,
+        enableVoice: CONFIG.audio.enableVoice,
+        enableSFX: CONFIG.audio.enableSFX,
+        sensitivity: document.getElementById('sensitivitySlider')?.value || 3
+    };
+    localStorage.setItem('fingerCatSettings', JSON.stringify(settings));
+    console.log('✅ 设置已保存');
+}
+
+// 从本地存储加载设置
+function loadSettings() {
+    const saved = localStorage.getItem('fingerCatSettings');
+    if (saved) {
+        try {
+            const settings = JSON.parse(saved);
+            if (settings.fingerThresholds) {
+                CONFIG.detection.fingerThresholds = settings.fingerThresholds;
+            }
+            if (settings.difficulty) {
+                STATE.currentDifficulty = settings.difficulty;
+                const difficultySelect = document.getElementById('difficultySelect');
+                if (difficultySelect) difficultySelect.value = settings.difficulty;
+            }
+            if (settings.enableVoice !== undefined) {
+                CONFIG.audio.enableVoice = settings.enableVoice;
+                const voiceToggle = document.getElementById('voiceToggle');
+                if (voiceToggle) voiceToggle.checked = settings.enableVoice;
+            }
+            if (settings.enableSFX !== undefined) {
+                CONFIG.audio.enableSFX = settings.enableSFX;
+                const sfxToggle = document.getElementById('sfxToggle');
+                if (sfxToggle) sfxToggle.checked = settings.enableSFX;
+            }
+            if (settings.sensitivity) {
+                CONFIG.detection.minFramesConsistent = 6 - parseInt(settings.sensitivity);
+                const slider = document.getElementById('sensitivitySlider');
+                if (slider) slider.value = settings.sensitivity;
+                const sensitivityValue = document.getElementById('sensitivityValue');
+                if (sensitivityValue) {
+                    const labels = ['很低', '较低', '中等', '较高', '很高'];
+                    sensitivityValue.textContent = labels[parseInt(settings.sensitivity) - 1];
+                }
+            }
+            console.log('✅ 设置已加载', settings);
+        } catch (e) {
+            console.error('❌ 加载设置失败:', e);
+        }
+    }
+}

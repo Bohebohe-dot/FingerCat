@@ -124,6 +124,32 @@
                         <input type="range" id="sensitivitySlider" min="1" max="5" value="3">
                         <span id="sensitivityValue">中等</span>
                     </div>
+
+                    <div class="settings-group">
+                        <label>手指判定夹角 (越小越严格):</label>
+                        <div class="finger-settings">
+                            <div class="finger-item">
+                                <span>拇指</span>
+                                <input type="number" id="thumbThreshold" min="0" max="180" value="30">°
+                            </div>
+                            <div class="finger-item">
+                                <span>食指</span>
+                                <input type="number" id="indexThreshold" min="0" max="180" value="30">°
+                            </div>
+                            <div class="finger-item">
+                                <span>中指</span>
+                                <input type="number" id="middleThreshold" min="0" max="180" value="30">°
+                            </div>
+                            <div class="finger-item">
+                                <span>无名指</span>
+                                <input type="number" id="ringThreshold" min="0" max="180" value="30">°
+                            </div>
+                            <div class="finger-item">
+                                <span>小指</span>
+                                <input type="number" id="pinkyThreshold" min="0" max="180" value="30">°
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
